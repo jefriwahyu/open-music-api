@@ -5,21 +5,17 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 
-// const AlbumsService = require('../../services/inMemory/AlbumsService');
-
 class SongsHandler {
-  constructor(service) {
+  constructor(service, validator) {
     this._service = service;
+    this._validator = validator;
   }
 
   async postSongHandler(request, h) {
+    await this._validator.validateSongPayload(request.payload);
     const {
       title, year, genre, performer, duration, albumId,
     } = request.payload;
-
-    // const albumsService = new AlbumsService();
-    // const latesAlbum = albumsService.getLatestAlbum();
-    // const albumId = latesAlbum.id;
 
     const song_id = await this._service.addSong({
       title, year, genre, performer, duration, albumId,
@@ -29,13 +25,7 @@ class SongsHandler {
       status: 'success',
       data: {
         song: {
-          id: song_id,
-          title,
-          year,
-          genre,
-          performer,
-          duration,
-          albumId,
+          songId: song_id,
         },
       },
     });
@@ -65,6 +55,7 @@ class SongsHandler {
   }
 
   async putSongByIdHandler(request) {
+    await this._validator.validateSongPayload(request.payload);
     const { id } = request.params;
 
     await this._service.editSongById(id, request.payload);

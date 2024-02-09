@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable import/no-extraneous-dependencies */
 require('dotenv').config();
 
@@ -8,6 +9,7 @@ const AlbumsService = require('./services/postgres/AlbumsService');
 const SongsService = require('./services/postgres/SongsService');
 const AlbumsValidator = require('./validator/albums');
 const SongsValidator = require('./validator/songs');
+const ClientError = require('./exceptions/ClientError');
 
 const init = async () => {
   const albumsService = new AlbumsService();
@@ -22,21 +24,27 @@ const init = async () => {
     },
   });
 
-  await server.register({
-    plugin: albums,
-    options: {
-      service: albumsService,
-      validator: AlbumsValidator,
-    },
-  });
+  await server.register([
 
-  await server.register({
-    plugin: songs,
-    options: {
-      service: songsService,
-      validator: SongsValidator,
+    // plugin album
+    {
+      plugin: albums,
+      options: {
+        service: albumsService,
+        validator: AlbumsValidator,
+      },
     },
-  });
+
+    // plugin album
+    {
+      plugin: songs,
+      options: {
+        service: songsService,
+        validator: SongsValidator,
+      },
+    },
+
+  ]);
 
   server.ext('onPreResponse', (request, h) => {
     // get response from request
@@ -62,8 +70,9 @@ const init = async () => {
       // penanganan error sesuai kebutuhan
       const newResponse = h.response({
         status: 'error',
-        message: 'terjadi kegagalan pada server',
+        message: 'server mengalami kegagalan',
       });
+      console.error(newResponse);
       newResponse.code(500);
       return newResponse;
     }
