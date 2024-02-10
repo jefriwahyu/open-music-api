@@ -1,5 +1,4 @@
-/* eslint-disable no-undef */
-/* eslint-disable import/no-extraneous-dependencies */
+
 require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
@@ -72,7 +71,7 @@ const init = async () => {
         status: 'error',
         message: 'server mengalami kegagalan',
       });
-      console.error(newResponse);
+      console.error(response);
       newResponse.code(500);
       return newResponse;
     }

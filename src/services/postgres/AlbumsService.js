@@ -1,5 +1,4 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable import/no-extraneous-dependencies */
+
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -21,15 +20,10 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError('Album gagal ditambahkan');
+      throw new InvariantError('Gagal ditambahkan album');
     }
 
     return result.rows[0].id;
-  }
-
-  async getAlbums() {
-    const result = await this._pool.query('SELECT * FROM albums');
-    return result.rows;
   }
 
   async getAlbumById(id) {
@@ -40,7 +34,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album tidak ditemukan');
+      throw new NotFoundError('Album yang anda cari tidak ditemukan');
     }
 
     return result.rows[0];
@@ -55,7 +49,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Gagal memperbarui album. Id tidak dapat ditemukan');
+      throw new NotFoundError('Gagal memperbarui album, karena Id tidak ditemukan');
     }
   }
 
@@ -68,7 +62,7 @@ class AlbumsService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new NotFoundError('Album gagal dihapus. Id tidak dapat ditemukan');
+      throw new NotFoundError('Album gagal dihapus, karena Id tidak ditemukan');
     }
   }
 }

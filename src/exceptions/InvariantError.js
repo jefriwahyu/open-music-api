@@ -1,3 +1,4 @@
+
 const ClientError = require('./ClientError');
 
 class InvariantError extends ClientError {

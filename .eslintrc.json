@@ -11,6 +11,10 @@
     },
     "rules": {
         "no-console": "off",
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "camelcase":"off",
+        "no-multiple-empty-lines":"off",
+        "no-underscore-dangle":"off",
+        "object-shorthand":"off"
     }
 }

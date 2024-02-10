@@ -1,14 +1,12 @@
-/* eslint-disable arrow-body-style */
-/* eslint-disable object-shorthand */
-/* eslint-disable no-undef */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable camelcase */
+
+// membuat class handler album
 class AlbumsHandler {
   constructor(service, validator) {
     this._service = service;
     this._validator = validator;
   }
 
+  // fungsi handler untuk membuat data Album
   async postAlbumHandler(request, h) {
     await this._validator.validateAlbumPayload(request.payload);
     const { name, year } = request.payload;
@@ -25,6 +23,7 @@ class AlbumsHandler {
     return response;
   }
 
+  // fungsi handler untuk mendapatkan data Album berdasarkan id
   async getAlbumByIdHandler(request) {
     const { id } = request.params;
     const album = await this._service.getAlbumById(id);
@@ -36,6 +35,7 @@ class AlbumsHandler {
     };
   }
 
+  // fungsi handler untuk memperbarui data Album berdasarkan id
   async putAlbumByIdHandler(request) {
     await this._validator.validateAlbumPayload(request.payload);
     const { id } = request.params;
@@ -48,6 +48,7 @@ class AlbumsHandler {
     };
   }
 
+  // fungsi handler untuk menghapus data Album berdasarkan id
   async deleteAlbumByIdHandler(request) {
     const { id } = request.params;
     await this._service.deleteAlbumById(id);

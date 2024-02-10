@@ -1,5 +1,6 @@
-/* eslint-disable no-undef */
-const mapDBToModel = ({
+
+// set DB getSongs
+const mapDBgetSongs = ({
   id,
   title,
   performer,
@@ -9,4 +10,21 @@ const mapDBToModel = ({
   performer,
 });
 
-module.exports = { mapDBToModel };
+// set DB getSongs
+const mapDBaddSong = ({
+  id,
+  title,
+  genre,
+  performer,
+  duration,
+  album_id,
+}) => ({
+  id,
+  title,
+  genre,
+  performer,
+  duration,
+  albumId: album_id,
+});
+
+module.exports = { mapDBgetSongs, mapDBaddSong };

@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 
 exports.up = (pgm) => {
   pgm.createTable('songs', {
@@ -26,9 +25,9 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    albumId: {
+    album_id: {
       type: 'TEXT',
-      notNull: true,
+      notNull: false,
     },
   });
 };
