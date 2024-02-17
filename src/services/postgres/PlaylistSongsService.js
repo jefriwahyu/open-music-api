@@ -8,7 +8,7 @@ class PlaylistSongsService {
     this._pool = new Pool();
   }
 
-  async addingSongtoPlaylist({ playlistId, songId }) {
+  async addingSongtoPlaylist(playlistId, songId) {
     const id = `playlist-song-${nanoid(16)}`;
 
     const query = {
@@ -28,10 +28,9 @@ class PlaylistSongsService {
   async getSongsinPlaylist(playlistId) {
     const songQuery = {
       text: `SELECT songs.id, songs.title, songs.performer
-            FROM songs
-            INNER JOIN playlistssongs ON songs.id = playlistssongs.song_id
-            WHERE playlistssongs.playlist_id = $1
-        `,
+            FROM playlistssongs
+            JOIN songs ON playlistssongs.song_id = songs.id
+            WHERE playlist_id = $1`,
       values: [playlistId],
     };
 
@@ -40,8 +39,8 @@ class PlaylistSongsService {
     const playlistQuery = {
       text: `SELECT playlist.id, playlist.name, users.username
               FROM playlist
-              INNER JOIN users ON playlist.owner = users.id
-          `,
+              LEFT JOIN users ON playlist.owner = users.id
+              WHERE playlist.id = $1`,
       values: [playlistId],
     };
 
@@ -54,7 +53,7 @@ class PlaylistSongsService {
     return playlistQueryResult.rows[0].songs = songQueryResult.rows;
   }
 
-  async deleteSonginPlaylist({ playlistId, songId }) {
+  async deleteSonginPlaylist(playlistId, songId) {
     const query = {
       text: 'DELETE FROM playlistssongs WHERE playlist_id=$1 AND song_id=$2 RETURNING id',
       values: [playlistId, songId],
@@ -62,7 +61,7 @@ class PlaylistSongsService {
 
     const result = await this._pool.query(query);
 
-    if (!result.rows[0].length) {
+    if (!result.rows.length) {
       throw new InvariantError('Gagal menghapus lagu didalam Playlist');
     }
   }

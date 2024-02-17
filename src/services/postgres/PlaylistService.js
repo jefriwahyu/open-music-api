@@ -6,8 +6,9 @@ const AuthorizationError = require('../../exceptions/AuthenticationError');
 const { mapDBgetPlaylist } = require('../../utils');
 
 class PlaylistService {
-  constructor() {
+  constructor(collaborationService) {
     this._pool = new Pool();
+    this._collaborationService = collaborationService;
   }
 
   async addPlaylist({ name, owner }) {
@@ -23,16 +24,17 @@ class PlaylistService {
     if (!result.rows[0].id) {
       throw new InvarianError('Gagal menambahkan Playlist');
     }
-
     return result.rows[0].id;
   }
 
   async getPlaylists(owner) {
     const query = {
-      text: `SELECT playlist.* FROM playlist
+      text: `SELECT playlist.*, users.username
+      FROM playlist
       LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
+      LEFT JOIN users ON playlist.owner = users.id
       WHERE playlist.owner = $1 OR collaborations.user_id = $1
-      GROUP BY playlist.id`,
+      GROUP BY playlist.id, users.username`,
       values: [owner],
     };
     const result = await this._pool.query(query);
