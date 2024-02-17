@@ -1,5 +1,5 @@
 
-// set DB getSongs
+// set map getSongs
 const mapDBgetSongs = ({
   id,
   title,
@@ -10,7 +10,7 @@ const mapDBgetSongs = ({
   performer,
 });
 
-// set DB getSongs
+// set map addSongs
 const mapDBaddSong = ({
   id,
   title,
@@ -27,4 +27,15 @@ const mapDBaddSong = ({
   albumId: album_id,
 });
 
-module.exports = { mapDBgetSongs, mapDBaddSong };
+// set map getPlaylists
+const mapDBgetPlaylist = ({
+  id,
+  name,
+  username,
+}) => ({
+  id,
+  name,
+  username,
+});
+
+module.exports = { mapDBgetSongs, mapDBaddSong, mapDBgetPlaylist };
