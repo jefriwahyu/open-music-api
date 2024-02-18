@@ -12,13 +12,13 @@ class PlaylistSongsService {
     const id = `playlist-song-${nanoid(16)}`;
 
     const query = {
-      text: 'INSERT INTO playlistssongs VALUES($1, $2, $3) RETURNING id',
+      text: 'INSERT INTO playlistssongs VALUES ($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
     const result = await this._pool.query(query);
 
-    if (!result.rows[0].length) {
+    if (!result.rows.length) {
       throw new InvariantError('Lagu yang anda pilih gagal ditambahkan kedalam Playlist');
     }
 
@@ -46,7 +46,7 @@ class PlaylistSongsService {
 
     const playlistQueryResult = await this._pool.query(playlistQuery);
 
-    if (!songQueryResult.rows[0].length && !playlistQueryResult.rows[0].length) {
+    if (!songQueryResult.rows[0].length) {
       throw new InvariantError('Gagal melihat lagu didalam playlist');
     }
 

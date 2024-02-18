@@ -63,20 +63,21 @@ class PlaylistHandler {
   async postSongsinPlaylistHandler(request, h) {
     this._validator.validatePlaylistSongIdPayload(request.payload);
 
-    const { playlist_id: id } = request.params;
-    const { song_id } = request.payload;
+    const { id } = request.params; // playlistId
+    const { songId } = request.payload;
     const { id: credentialId } = request.auth.credentials;
+
+    await this._songsService.verifySongsExist(songId);
+
+    await this._playlistService.verifyPlaylistsExist(id);
 
     await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
-    const playlistId = await this._playlistSongsService.addingSongtoPlaylist(id, song_id);
+    await this._playlistSongsService.addingSongtoPlaylist(id, songId);
 
     const response = h.response({
       status: 'success',
       message: 'Lagu telah berhasil ditambahkan di Playlist. Selamat menikmati lagumu.',
-      data: {
-        playlistId,
-      },
     });
     response.code(201);
     return response;
@@ -86,14 +87,16 @@ class PlaylistHandler {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
 
+    await this._playlistService.verifyPlaylistsExist(id);
+
     await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
-    const playlist = await this._playlistSongsService.getSongsinPlaylist(id);
+    const playlists = await this._playlistSongsService.getSongsinPlaylist(id);
 
     return {
       status: 'success',
       data: {
-        playlist,
+        playlists,
       },
     };
   }
@@ -104,6 +107,10 @@ class PlaylistHandler {
     const { id } = request.params;
     const { songId } = request.payload;
     const { id: credentialId } = request.auth.credentials;
+
+    await this._songsService.verifySongsExist(songId);
+
+    await this._playlistService.verifyPlaylistsExist(id);
 
     await this._playlistService.verifyPlaylistAccess(id, credentialId);
 

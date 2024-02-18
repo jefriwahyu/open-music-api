@@ -54,10 +54,10 @@ class PlaylistService {
     }
   }
 
-  async verifyPlaylistOwner(playlistId, owner) {
+  async verifyPlaylistOwner(id, owner) {
     const query = {
-      text: 'SELECT * FROM playlist WHERE id = $1',
-      values: [playlistId],
+      text: 'SELECT id, owner FROM playlist WHERE id = $1',
+      values: [id],
     };
 
     const result = await this._pool.query(query);
@@ -85,6 +85,19 @@ class PlaylistService {
       } catch {
         throw error;
       }
+    }
+  }
+
+  async verifyPlaylistsExist(playlistId) {
+    const query = {
+      text: 'SELECT COUNT(1) FROM playlist WHERE id = $1',
+      values: [playlistId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result) {
+      throw new NotFoundError('Playlist anda tidak ditemukan.');
     }
   }
 }
