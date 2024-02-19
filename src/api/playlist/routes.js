@@ -1,4 +1,4 @@
-// mengganti playlist/{id}/songs
+
 const routes = (handler) => [
   {
     method: 'POST',

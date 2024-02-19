@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable indent */
 
 // membuat class handler playlist
 class PlaylistHandler {
@@ -8,7 +6,7 @@ class PlaylistHandler {
     playlistSongsService,
     songsService,
     validator,
-    ) {
+  ) {
     this._playlistService = playlistService;
     this._playlistSongsService = playlistSongsService;
     this._songsService = songsService;
@@ -18,9 +16,9 @@ class PlaylistHandler {
   // fungsi handler untuk membuat data playlist
   async postPlaylistHandler(request, h) {
     await this._validator.validatePlaylistPayload(request.payload);
+
     const { name } = request.payload;
     const { id: credentialId } = request.auth.credentials;
-
     const playlistId = await this._playlistService.addPlaylist({ name, owner: credentialId });
 
     const response = h.response({
@@ -37,6 +35,7 @@ class PlaylistHandler {
   async getPlaylistsHandler(request) {
     const { id: credentialId } = request.auth.credentials;
     const playlists = await this._playlistService.getPlaylists(credentialId);
+
     return {
       status: 'success',
       data: {
@@ -51,6 +50,7 @@ class PlaylistHandler {
     const { id: credentialId } = request.auth.credentials;
 
     await this._playlistService.verifyPlaylistOwner(id, credentialId);
+
     await this._playlistService.deletePlaylistById(id);
 
     return {
@@ -83,7 +83,7 @@ class PlaylistHandler {
     return response;
   }
 
-  async getSongsinPlaylistHandler(request, h) {
+  async getSongsinPlaylistHandler(request) {
     const { id } = request.params;
     const { id: credentialId } = request.auth.credentials;
 
@@ -91,17 +91,21 @@ class PlaylistHandler {
 
     await this._playlistService.verifyPlaylistAccess(id, credentialId);
 
-    const playlists = await this._playlistSongsService.getSongsinPlaylist(id);
+    const playlist = await this._playlistService.getPlaylistById(id, credentialId);
+    const songs = await this._playlistSongsService.getSongsinPlaylist(id);
 
     return {
       status: 'success',
       data: {
-        playlists,
+        playlist: {
+          ...playlist,
+          songs,
+        },
       },
     };
   }
 
-  async deleteSonginPlaylistHandler(request, h) {
+  async deleteSonginPlaylistHandler(request) {
     this._validator.validatePlaylistSongIdPayload(request.payload);
 
     const { id } = request.params;

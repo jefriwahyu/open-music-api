@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 
 class CollaborationsHandler {
   constructor(collaborationsService, playlistService, usersService, validator) {
@@ -17,24 +16,24 @@ class CollaborationsHandler {
 
     await this._playlistService.verifyPlaylistsExist(playlistId);
 
-    await this._playlistService.verifyPlaylistOwner(playlistId, credentialId);
+    await this._playlistService.verifyPlaylistAccess(playlistId, credentialId);
 
     await this._usersService.verifyUserExist(userId);
 
-    const collabId = await this._collaborationsService.addCollaboration(playlistId, userId);
+    const collaborationId = await this._collaborationsService.addCollaboration(playlistId, userId);
 
     const response = h.response({
       status: 'success',
       message: 'Kolaborasi berhasil ditambahkan',
       data: {
-        collabId,
+        collaborationId,
       },
     });
     response.code(201);
     return response;
   }
 
-  async deleteCollaborationHandler(request, h) {
+  async deleteCollaborationHandler(request) {
     this._validator.validateCollaborationPayload(request.payload);
 
     const { id: credentialId } = request.auth.credentials;
@@ -43,7 +42,7 @@ class CollaborationsHandler {
 
     await this._playlistService.verifyPlaylistsExist(playlistId);
 
-    await this._Service.verifyNoteOwner(playlistId, credentialId);
+    await this._playlistService.verifyPlaylistOwner(playlistId, credentialId);
 
     await this._usersService.verifyUserExist(userId);
 

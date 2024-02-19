@@ -1,9 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
+
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const InvariantError = require('../../exceptions/InvariantError');
-const AuthenticationError = require('../../exceptions/AuthenticationError');
+const Unauthorized = require('../../exceptions/Unauthorized');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class UsersService {
@@ -51,27 +51,27 @@ class UsersService {
     const result = await this._pool.query(query);
 
     if (!result.rows.length) {
-      throw new AuthenticationError('Kredensial yang Anda berikan salah');
+      throw new Unauthorized('Kredensial yang Anda berikan salah');
     }
 
     const { id, password: hashedPassword } = result.rows[0];
     const match = await bcrypt.compare(password, hashedPassword);
 
     if (!match) {
-      throw new AuthenticationError('Kredensial yang Anda berikan salah');
+      throw new Unauthorized('Kredensial yang Anda berikan salah');
     }
     return id;
   }
 
   async verifyUserExist(userId) {
     const query = {
-      text: 'SELECT COUNT(1) FROM users WHERE id = $1',
+      text: 'SELECT id FROM users WHERE id = $1',
       values: [userId],
     };
 
     const result = await this._pool.query(query);
 
-    if (!result) {
+    if (!result.rowCount) {
       throw new NotFoundError('User tidak dapat ditemukan.');
     }
   }

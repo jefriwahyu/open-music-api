@@ -1,3 +1,4 @@
+
 const InvariantError = require('../../exceptions/InvariantError');
 const { UserPayloadSchema } = require('./schema');
 

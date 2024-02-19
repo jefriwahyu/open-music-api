@@ -1,8 +1,9 @@
+
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const InvarianError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
-const AuthorizationError = require('../../exceptions/AuthenticationError');
+const ForbiddenError = require('../../exceptions/ForbiddenError');
 const { mapDBgetPlaylist } = require('../../utils');
 
 class PlaylistService {
@@ -41,6 +42,24 @@ class PlaylistService {
     return result.rows.map(mapDBgetPlaylist);
   }
 
+  async getPlaylistById(id, credentialId) {
+    const query = {
+      text: `SELECT playlist.id, playlist.name, users.username FROM playlist
+        INNER JOIN users ON users.id = playlist.owner
+        LEFT JOIN collaborations ON collaborations.playlist_id = playlist.id
+        WHERE (playlist.owner = $1 OR collaborations.user_id = $1) AND playlist.id = $2`,
+      values: [credentialId, id],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new NotFoundError('Playlist yang anda cari tidak ditemukan');
+    }
+
+    return result.rows[0];
+  }
+
   async deletePlaylistById(id) {
     const query = {
       text: 'DELETE FROM playlist WHERE id = $1 RETURNING id',
@@ -69,7 +88,7 @@ class PlaylistService {
     const playlist = result.rows[0];
 
     if (playlist.owner !== owner) {
-      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
+      throw new ForbiddenError('Anda tidak berhak mengakses resource ini');
     }
   }
 
@@ -90,13 +109,13 @@ class PlaylistService {
 
   async verifyPlaylistsExist(playlistId) {
     const query = {
-      text: 'SELECT COUNT(1) FROM playlist WHERE id = $1',
+      text: 'SELECT id FROM playlist WHERE id = $1',
       values: [playlistId],
     };
 
     const result = await this._pool.query(query);
 
-    if (!result) {
+    if (!result.rowCount) {
       throw new NotFoundError('Playlist anda tidak ditemukan.');
     }
   }

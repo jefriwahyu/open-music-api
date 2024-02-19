@@ -9,6 +9,7 @@ class AlbumsHandler {
   // fungsi handler untuk membuat data Album
   async postAlbumHandler(request, h) {
     await this._validator.validateAlbumPayload(request.payload);
+
     const { name, year } = request.payload;
 
     const album_id = await this._service.addAlbum({ name, year });
@@ -27,6 +28,7 @@ class AlbumsHandler {
   async getAlbumByIdHandler(request) {
     const { id } = request.params;
     const album = await this._service.getAlbumById(id);
+
     return {
       status: 'success',
       data: {
@@ -38,6 +40,7 @@ class AlbumsHandler {
   // fungsi handler untuk memperbarui data Album berdasarkan id
   async putAlbumByIdHandler(request) {
     await this._validator.validateAlbumPayload(request.payload);
+
     const { id } = request.params;
 
     await this._service.editAlbumById(id, request.payload);

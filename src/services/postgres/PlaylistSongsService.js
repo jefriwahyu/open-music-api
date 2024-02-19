@@ -1,4 +1,4 @@
-/* eslint-disable no-return-assign */
+
 const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
@@ -22,35 +22,21 @@ class PlaylistSongsService {
       throw new InvariantError('Lagu yang anda pilih gagal ditambahkan kedalam Playlist');
     }
 
-    return result.rows[0].id;
+    return result.rows.id;
   }
 
   async getSongsinPlaylist(playlistId) {
-    const songQuery = {
-      text: `SELECT songs.id, songs.title, songs.performer
-            FROM playlistssongs
-            JOIN songs ON playlistssongs.song_id = songs.id
-            WHERE playlist_id = $1`,
+    const query = {
+      text: `SELECT songs.id, songs.title, songs.performer 
+      FROM songs
+      INNER JOIN playlistssongs ON songs.id = playlistssongs.song_id
+      INNER JOIN playlist ON playlist.id = playlistssongs.playlist_id
+      WHERE playlist.id = $1;`,
       values: [playlistId],
     };
 
-    const songQueryResult = await this._pool.query(songQuery);
-
-    const playlistQuery = {
-      text: `SELECT playlist.id, playlist.name, users.username
-              FROM playlist
-              LEFT JOIN users ON playlist.owner = users.id
-              WHERE playlist.id = $1`,
-      values: [playlistId],
-    };
-
-    const playlistQueryResult = await this._pool.query(playlistQuery);
-
-    if (!songQueryResult.rows[0].length) {
-      throw new InvariantError('Gagal melihat lagu didalam playlist');
-    }
-
-    return playlistQueryResult.rows[0].songs = songQueryResult.rows;
+    const result = await this._pool.query(query);
+    return result.rows;
   }
 
   async deleteSonginPlaylist(playlistId, songId) {
