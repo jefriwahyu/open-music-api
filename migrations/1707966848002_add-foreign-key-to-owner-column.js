@@ -2,13 +2,11 @@
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  pgm.sql(`INSERT INTO users(id, username, password, fullname) 
-           VALUES ('old_playlist', 'old_playlist', 'old_playlist', 'old playlist')`);
+  pgm.sql("INSERT INTO users(id, username, password, fullname) VALUES ('old_playlist', 'old_playlist', 'old_playlist', 'old playlist')");
 
   pgm.sql("UPDATE playlist SET owner = 'old_playlist' WHERE owner IS NULL");
 
-  pgm.addConstraint(`'playlist', 'fk_playlist.owner_users.id', 
-                     'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE'`);
+  pgm.addConstraint('playlist', 'fk_playlist.owner_users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
 };
 
 exports.down = (pgm) => {
