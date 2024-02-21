@@ -17,7 +17,7 @@ class ExportsHandler {
 
     const response = h.response({
       status: 'success',
-      message: 'Permintaan Anda dalam antrean',
+      message: 'Untuk sekarang Permintaan Anda dalam antrean. Mohon ditunggu yaa..',
     });
     response.code(201);
     return response;

@@ -38,4 +38,20 @@ const mapDBgetPlaylist = ({
   username,
 });
 
-module.exports = { mapDBgetSongs, mapDBaddSong, mapDBgetPlaylist };
+// set map getAlbumById
+const mapDBgetAlbumById = ({
+  id,
+  name,
+  cover,
+}) => ({
+  id,
+  name,
+  coverUrl: cover,
+});
+
+module.exports = {
+  mapDBgetSongs,
+  mapDBaddSong,
+  mapDBgetPlaylist,
+  mapDBgetAlbumById,
+};
