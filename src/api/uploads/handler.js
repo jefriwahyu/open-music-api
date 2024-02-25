@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
 
 class UploadsHandler {
-  constructor(storageService, validator, albumsService) {
-    this._storageService = storageService;
+  constructor(service, albumsService, validator) {
+    this._service = service;
     this._albumsService = albumsService;
     this._validator = validator;
-
-    this.postUploadCoverHandler = this.postUploadCoverHandler.bind(this);
   }
 
   async postUploadCoverHandler(request, h) {
@@ -15,10 +13,10 @@ class UploadsHandler {
 
     this._validator.validateCoversHeaders(cover.hapi.headers);
 
-    const filename = await this._storageService.writeFile(cover, cover.hapi);
-    const fileloc = `http://${process.env.HOST}:${process.env.PORT}/uploads/images/${filename}`;
+    const filename = await this._service.writeFile(cover, cover.hapi);
+    const fileloc = `http://${process.env.HOST}:${process.env.PORT}/uploads/file/images/${filename}`;
 
-    await this._albumsService.addCoverHandler({ id, cover: fileloc });
+    await this._albumsService.addCoverHandler({ cover: fileloc, id });
 
     const response = h.response({
       status: 'success',
@@ -29,5 +27,4 @@ class UploadsHandler {
   }
 }
 
-
-exports.modules = UploadsHandler;
+module.exports = UploadsHandler;

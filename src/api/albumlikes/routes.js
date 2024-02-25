@@ -2,18 +2,25 @@
 const routes = (handler) => [
   {
     method: 'POST',
-    path: '/albums/{id}/likes',
+    path: '/albums/{albumId}/likes',
     handler: (request, h) => handler.postLikeAlbumHandler(request, h),
+    options: {
+      auth: 'musicapp_jwt',
+    },
   },
   {
     method: 'GET',
-    path: '/albums/{id}/likes',
-    handler: (request, h) => handler.getAlbumLikes(request, h),
+    path: '/albums/{albumId}/likes',
+    handler: (request, h) => handler.getLikeAlbumHandler(request, h),
   },
+
   {
     method: 'DELETE',
-    path: '/albums/{id}/likes',
-    handler: (request, h) => handler.deleteAlbumLikes(request, h),
+    path: '/albums/{albumId}/likes',
+    handler: (request, h) => handler.deleteLikeAlbumHandler(request, h),
+    options: {
+      auth: 'musicapp_jwt',
+    },
   },
 ];
 

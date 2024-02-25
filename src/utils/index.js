@@ -42,10 +42,12 @@ const mapDBgetPlaylist = ({
 const mapDBgetAlbumById = ({
   id,
   name,
+  year,
   cover,
 }) => ({
   id,
   name,
+  year,
   coverUrl: cover,
 });
 

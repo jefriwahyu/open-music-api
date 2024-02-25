@@ -38,7 +38,7 @@ class AlbumsService {
       throw new NotFoundError('Album yang anda cari tidak ditemukan');
     }
 
-    return result.rows.map(mapDBgetAlbumById);
+    return result.rows.map(mapDBgetAlbumById)[0];
   }
 
   async editAlbumById(id, { name, year }) {
@@ -67,10 +67,10 @@ class AlbumsService {
     }
   }
 
-  async addCoverHandler(id, cover) {
+  async addCoverHandler({ cover, id }) {
     const query = {
-      text: 'UPDATE albums SET id = $1 WHERE cover = $2 RETURNING id',
-      values: [id, cover],
+      text: 'UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id',
+      values: [cover, id],
     };
 
     const result = await this._pool.query(query);

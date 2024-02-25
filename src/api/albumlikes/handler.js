@@ -1,59 +1,80 @@
 
 
 class LikeAlbumHandler {
-  constructor(service, albumsService) {
-    this._service = service;
+  constructor(albumLikesService, albumsService) {
+    this._albumLikesService = albumLikesService;
     this._albumsService = albumsService;
   }
 
   async postLikeAlbumHandler(request, h) {
-    const { id: credentialId } = request.payload;
-    const albumId = request.params;
+    const { albumId } = request.params;
 
-    await this._service.addAlbumLikes(credentialId, albumId);
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._albumsService.getAlbumById(albumId);
+
+    await this._albumLikesService.addAlbumLikes(credentialId, albumId);
 
     const response = h.response({
       status: 'success',
       message: 'Like album berhasil',
     });
     response.code(201);
+
     return response;
   }
 
   async getLikeAlbumByIdHandler(request, h) {
-    const albumId = request.params;
-    const likes = await this._service.getAlbumLikes(albumId);
+    const { albumId } = request.params;
 
-    const { likesCount, source } = likes; // check
+    const likes = await this._albumLikesService.getAlbumLikes(albumId);
 
-    const dataLikeCount = JSON.parse(likesCount);
+    const { likesCount, cache } = likes;
 
     const response = h.response({
       status: 'success',
       data: {
-        likes: dataLikeCount,
+        likes: likesCount,
       },
     });
 
-    response.header('X-Data-Source', source);
-
+    if (cache) response.header('X-Data-Source', 'cache');
     return response;
   }
 
-  async getAlbumLikeHandler(request, h) {
+  async getLikeAlbumHandler(request, h) {
     const { albumId } = request.params;
-    const { likes, isChache = 0 } = await this._service.getAlbumLikes(albumId);
+
+    await this._albumsService.getAlbumById(albumId);
+
+    const result = await this._albumLikesService.getAlbumLikes(albumId);
 
     const response = h.response({
       status: 'success',
       data: {
-        likes: likes.length,
+        likes: result.likes,
       },
     });
     response.code(200);
 
-    if (isChache) response.header('X-Data-Source', 'cache');
+    response.header('X-Data-Source', result.source);
+
     return response;
+  }
+
+  async deleteLikeAlbumHandler(request, h) {
+    const { albumId } = request.params;
+
+    const { id: credentialId } = request.auth.credentials;
+
+    await this._albumsService.getAlbumById(albumId);
+
+    await this._albumLikesService.deleteAlbumLikes(credentialId, albumId);
+
+    return h.response({
+      status: 'success',
+      message: 'Like berhasil dihapus',
+    });
   }
 }
 

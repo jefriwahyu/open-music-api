@@ -1,6 +1,6 @@
 
-const InvariantError = require('../../exceptions/InvariantError');
 const { CoversHeadersSchema } = require('./schema');
+const InvariantError = require('../../exceptions/InvariantError');
 
 const CoversValidator = {
   validateCoversHeaders: (headers) => {

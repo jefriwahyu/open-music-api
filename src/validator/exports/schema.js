@@ -1,8 +1,8 @@
 
 const Joi = require('joi');
 
-const ExportNotesPayloadSchema = Joi.object({
+const ExportSonginPlaylistPayloadSchema = Joi.object({
   targetEmail: Joi.string().email({ tlds: true }).required(),
 });
 
-module.exports = ExportNotesPayloadSchema;
+module.exports = ExportSonginPlaylistPayloadSchema;

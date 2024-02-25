@@ -5,22 +5,23 @@ const routes = (handler) => [
   {
     method: 'POST',
     path: '/albums/{id}/covers',
-    handler: handler.postUploadImageHandler,
+    handler: (request, h) => handler.postUploadCoverHandler(request, h),
     options: {
       payload: {
         allow: 'multipart/form-data',
         multipart: true,
         output: 'stream',
+        maxBytes: 512000,
       },
     },
   },
 
   {
     method: 'GET',
-    path: '/uploads/images/{param*}',
+    path: '/uploads/file/images/{param*}',
     handler: {
       directory: {
-        path: path.resolve(__dirname, 'file'),
+        path: path.resolve(__dirname, 'file/images'),
       },
     },
   },
